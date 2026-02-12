@@ -46,6 +46,19 @@ const getLangKey = (language) => {
 
 //document, htmlData, bannerHTML
 //
+const getBannerHTML = (language) => {
+    const langKey = getLangKey(language);
+    const messages = messageDict[langKey];
+    const linkHTML = "https://example.org/questionnaire/high-risk";
+
+    return `
+        <div class="alert-banner questionnaire-lens" style="background-color:#ffdddd;padding:1em;border:1px solid #ff8888;margin-bottom:1em;">
+            ${messages.bannerWarning}
+            <a href="${linkHTML}" target="_blank" style="margin-left: 1em;">${messages.questionnaireLink}</a>
+        </div>
+    `;
+}
+
 const insertQuestionnaireLink = (listOfCategories, language, document, response) => {
     const langKey = getLangKey(language);
     const messages = messageDict[langKey];
@@ -56,7 +69,8 @@ const insertQuestionnaireLink = (listOfCategories, language, document, response)
     console.log(listOfCategories.length)
     listOfCategories.forEach((className) => {
         if (
-            response.includes(`class="${className}`) ||
+            response.includes(`class="${className}`)
+            ||
             response.includes(`class='${className}`)
         ) {
             const elements = document.getElementsByClassName(className);
@@ -85,12 +99,7 @@ const insertQuestionnaireLink = (listOfCategories, language, document, response)
     // No matching category tags → inject banner at top
     if (!foundCategory) {
         const bannerDiv = document.createElement("div");
-        bannerDiv.innerHTML = `
-            <div class="alert-banner questionnaire-lens" style="background-color:#ffdddd;padding:1em;border:1px solid #ff8888;margin-bottom:1em;">
-                ${messages.bannerWarning}
-                <a href="${linkHTML}" target="_blank" style="margin-left: 1em;">${messages.questionnaireLink}</a>
-            </div>
-        `;
+        bannerDiv.innerHTML = getBannerHTML(language);
 
         const body = document.querySelector("body");
         if (body) {
